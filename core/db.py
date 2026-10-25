@@ -142,13 +142,15 @@ def init_db():
 
     CREATE TABLE IF NOT EXISTS messages (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
+        user_id INTEGER,
         channel TEXT NOT NULL,
         sender TEXT NOT NULL,
         subject TEXT,
         body TEXT NOT NULL,
         link TEXT,
         is_scam INTEGER NOT NULL,
-        ts TEXT NOT NULL
+        ts TEXT NOT NULL,
+        FOREIGN KEY (user_id) REFERENCES users(id)
     );
     """)
     conn.commit()

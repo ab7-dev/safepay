@@ -17,6 +17,15 @@ def is_db_empty():
         conn.close()
 
 def seed_all(force=False):
+    if force:
+        conn = db.get_connection()
+        cur = conn.cursor()
+        for tbl in ["messages", "disputes", "rules", "alerts", "link_scans", "blocklist",
+                    "payment_requests", "transactions", "payees", "accounts", "users", "merchants"]:
+            cur.execute(f"DROP TABLE IF EXISTS {tbl}")
+        conn.commit()
+        conn.close()
+
     db.init_db()
     if not force and not is_db_empty():
         return
@@ -220,11 +229,12 @@ def seed_all(force=False):
         ("SMS", "UB-RIDES", "Uber Trip Receipt", "Your Tuesday evening trip with Uber was Rs 184. View receipt details on the Uber App.", None, 0, "2026-08-11 21:00:00"),
         ("SMS", "AP-PHARM", "Apollo Order Ready", "Order #AP9012 is ready for pickup at R.S. Puram branch. Amount paid: Rs 450.", None, 0, "2026-08-12 18:20:00")
     ]
-    for m in messages_seed:
+    for idx, m in enumerate(messages_seed):
+        target_uid = (idx % len(users_data)) + 1
         cur.execute(
-            """INSERT INTO messages (channel, sender, subject, body, link, is_scam, ts)
-               VALUES (?, ?, ?, ?, ?, ?, ?)""",
-            m
+            """INSERT INTO messages (user_id, channel, sender, subject, body, link, is_scam, ts)
+               VALUES (?, ?, ?, ?, ?, ?, ?, ?)""",
+            (target_uid, m[0], m[1], m[2], m[3], m[4], m[5], m[6])
         )
 
     # 7. Generate ~6500 historical transactions with overlapping distributions and realistic hard cases

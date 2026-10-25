@@ -1,4 +1,4 @@
-const CACHE_NAME = "safepay-v4";
+const CACHE_NAME = "safepay-v5";
 const SHELL_ASSETS = [
   "/",
   "/index.html",

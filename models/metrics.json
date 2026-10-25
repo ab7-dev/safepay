@@ -5,7 +5,7 @@
     "precision": 1.0,
     "recall": 0.7923,
     "f1": 0.8841,
-    "pr_auc": 0.8608,
+    "pr_auc": 0.8458,
     "confusion_matrix": [
       [
         1174,
@@ -18,48 +18,48 @@
     ],
     "cv_metrics": {
       "accuracy": {
-        "mean": 0.9758,
-        "std": 0.0025
+        "mean": 0.9732,
+        "std": 0.0018
       },
       "precision": {
-        "mean": 0.9636,
-        "std": 0.0243
+        "mean": 0.9379,
+        "std": 0.0321
       },
       "recall": {
-        "mean": 0.7892,
-        "std": 0.0288
+        "mean": 0.7854,
+        "std": 0.0271
       },
       "f1": {
-        "mean": 0.8671,
-        "std": 0.0157
+        "mean": 0.854,
+        "std": 0.011
       },
       "pr_auc": {
-        "mean": 0.8306,
-        "std": 0.0215
+        "mean": 0.8193,
+        "std": 0.0197
       }
     },
     "feature_importances": {
-      "amount_ratio": 0.1014,
-      "hour": 0.0744,
-      "txns_last_10min": 0.0054,
-      "city_mismatch": 0.2587,
-      "is_new_device": 0.2472,
+      "amount_ratio": 0.104,
+      "hour": 0.0805,
+      "txns_last_10min": 0.0056,
+      "city_mismatch": 0.2662,
+      "is_new_device": 0.2457,
       "new_payee": 0.0,
-      "merchant_risk": 0.313,
+      "merchant_risk": 0.298,
       "failed_pin_count": 0.0,
       "recent_pin_reset": 0.0
     }
   },
   "hist_gradient_boosting": {
-    "accuracy": 0.9686,
-    "precision": 0.8739,
+    "accuracy": 0.9663,
+    "precision": 0.8525,
     "recall": 0.8,
-    "f1": 0.8353,
-    "pr_auc": 0.8516,
+    "f1": 0.8254,
+    "pr_auc": 0.8448,
     "confusion_matrix": [
       [
-        1159,
-        15
+        1156,
+        18
       ],
       [
         26,
@@ -68,24 +68,24 @@
     ],
     "cv_metrics": {
       "accuracy": {
-        "mean": 0.9532,
-        "std": 0.0047
+        "mean": 0.9513,
+        "std": 0.0045
       },
       "precision": {
-        "mean": 0.7524,
-        "std": 0.0317
+        "mean": 0.742,
+        "std": 0.0342
       },
       "recall": {
-        "mean": 0.7968,
-        "std": 0.0317
+        "mean": 0.7912,
+        "std": 0.0199
       },
       "f1": {
-        "mean": 0.7732,
-        "std": 0.0214
+        "mean": 0.7651,
+        "std": 0.017
       },
       "pr_auc": {
-        "mean": 0.835,
-        "std": 0.0239
+        "mean": 0.8142,
+        "std": 0.0222
       }
     }
   },

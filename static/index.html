@@ -27,7 +27,7 @@
     <!-- Main Screens Container -->
     <main class="app-content">
       
-      <!-- SCREEN 1: SIGN IN (MATCHING REFERENCE 1 LEFT PHONE) -->
+      <!-- SCREEN 1: SIGN IN & SIGN UP -->
       <section id="screen-login" class="screen active">
         <div class="signin-screen-box">
           <!-- SafePay Logo Mark: Shield-S with purple-amber gradient -->
@@ -44,75 +44,140 @@
             </svg>
           </div>
 
-          <div class="signin-heading-area">
-            <div class="signin-greeting">Hi Mate,</div>
-            <h1 class="signin-title">Sign in Now</h1>
-          </div>
-
-          <!-- Profile Picker -->
-          <div class="signin-picker-container">
-            <label class="signin-label">Select Profile Account:</label>
-            <div id="login-users-list" class="recent-avatars-row">
-              <!-- Populated by JS -->
-            </div>
-          </div>
-
-          <!-- PIN Box -->
-          <div id="pin-login-box" class="neu-card" style="text-align: center; margin-bottom: 20px;">
-            <div id="selected-user-name" style="font-size: 15px; font-weight: 700; color: var(--text-primary); margin-bottom: 2px;">Aarav Sharma</div>
-            <div id="selected-user-upi" style="font-size: 11px; color: var(--text-secondary); margin-bottom: 14px;">aarav@oksbi • Demo PIN: 1234</div>
-            
-            <!-- 4 PIN Dots -->
-            <div id="login-pin-dots" style="display: flex; justify-content: center; gap: 14px; margin-bottom: 14px;">
-              <div class="pin-dot" style="width: 14px; height: 14px; border-radius: 50%; background: var(--bg-surface-elevated); box-shadow: var(--shadow-pressed);"></div>
-              <div class="pin-dot" style="width: 14px; height: 14px; border-radius: 50%; background: var(--bg-surface-elevated); box-shadow: var(--shadow-pressed);"></div>
-              <div class="pin-dot" style="width: 14px; height: 14px; border-radius: 50%; background: var(--bg-surface-elevated); box-shadow: var(--shadow-pressed);"></div>
-              <div class="pin-dot" style="width: 14px; height: 14px; border-radius: 50%; background: var(--bg-surface-elevated); box-shadow: var(--shadow-pressed);"></div>
+          <!-- SIGN IN FORM VIEW -->
+          <div id="auth-signin-view">
+            <div class="signin-heading-area">
+              <div class="signin-greeting">SafePay Fraud Shield</div>
+              <h1 class="signin-title">Sign in Now</h1>
             </div>
 
-            <!-- Neumorphic Keypad -->
-            <div class="neu-numpad">
-              <button class="neu-key" onclick="handleLoginDigit('1')">1</button>
-              <button class="neu-key" onclick="handleLoginDigit('2')">2</button>
-              <button class="neu-key" onclick="handleLoginDigit('3')">3</button>
-              <button class="neu-key" onclick="handleLoginDigit('4')">4</button>
-              <button class="neu-key" onclick="handleLoginDigit('5')">5</button>
-              <button class="neu-key" onclick="handleLoginDigit('6')">6</button>
-              <button class="neu-key" onclick="handleLoginDigit('7')">7</button>
-              <button class="neu-key" onclick="handleLoginDigit('8')">8</button>
-              <button class="neu-key" onclick="handleLoginDigit('9')">9</button>
-              <button class="neu-key" style="font-size: 12px; font-weight: 700;" onclick="clearLoginPin()">CLR</button>
-              <button class="neu-key" onclick="handleLoginDigit('0')">0</button>
-              <button class="neu-key" onclick="backspaceLoginPin()">⌫</button>
-            </div>
-          </div>
-
-          <!-- Raised Continue Button -->
-          <button class="btn-neu-raised" onclick="submitLoginPin()">Continue</button>
-
-          <!-- Or Continue with Divider -->
-          <div class="or-divider">
-            <span>Or Continue with</span>
-          </div>
-
-          <!-- Raised Full-Width Persona Buttons -->
-          <div class="quick-persona-buttons">
-            <button class="btn-persona-raised" onclick="quickSelectPersona(1)">
-              <div class="persona-icon" style="background: #29B6F6;">AS</div>
-              <div class="persona-info">
-                <div class="persona-title">Aarav Sharma (Student)</div>
-                <div class="persona-sub">aarav@oksbi • Delhi</div>
+            <!-- Phone or UPI ID Field -->
+            <div class="neu-card" style="padding: 12px 16px; margin-bottom: 14px;">
+              <label for="login-identifier-input" style="font-size: 11px; font-weight: 600; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px; display: block; margin-bottom: 4px;">Phone Number or UPI ID</label>
+              <div style="display: flex; align-items: center; gap: 10px;">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--text-secondary)" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+                <input type="text" id="login-identifier-input" placeholder="+919876543210 or aarav@oksbi" autocomplete="username" style="width: 100%; background: transparent; border: none; outline: none; color: #FFFFFF; font-size: 15px; font-weight: 600;">
               </div>
-              <span class="persona-arrow">→</span>
-            </button>
-            <button class="btn-persona-raised" onclick="quickSelectPersona(2)">
-              <div class="persona-icon" style="background: #F48FB1;">RM</div>
-              <div class="persona-info">
-                <div class="persona-title">Rohan Mehta (Merchant)</div>
-                <div class="persona-sub">rohan.store@icici • Mumbai</div>
+            </div>
+
+            <!-- Selected Demo User Info Card (Shown when selected from demo accounts) -->
+            <div id="login-selected-user-card" style="display: none; align-items: center; justify-content: space-between; background: rgba(108, 77, 255, 0.14); border-radius: 14px; padding: 10px 14px; margin-bottom: 14px;">
+              <div style="display: flex; align-items: center; gap: 10px;">
+                <div id="selected-user-avatar" class="avatar-square" style="width: 34px; height: 34px; font-size: 12px; background: #6C4DFF;">AS</div>
+                <div>
+                  <div id="selected-user-name" style="font-size: 13px; font-weight: 700; color: #FFFFFF;">Aarav Sharma</div>
+                  <div id="selected-user-sub" style="font-size: 11px; color: var(--text-secondary);">aarav@oksbi • Delhi</div>
+                </div>
               </div>
-              <span class="persona-arrow">→</span>
-            </button>
+              <button class="filter-chip" style="padding: 4px 10px; font-size: 10px;" onclick="clearSelectedDemoUser()">Clear</button>
+            </div>
+
+            <!-- Error Banner -->
+            <div id="login-error-msg" style="display: none; background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.35); border-radius: 12px; padding: 10px 14px; font-size: 12px; color: #FCA5A5; margin-bottom: 14px; text-align: center;"></div>
+
+            <!-- Account Locked Card -->
+            <div id="login-locked-card" style="display: none; background: rgba(239, 68, 68, 0.2); border: 1px solid #EF4444; border-radius: 18px; padding: 16px; margin-bottom: 16px; text-align: center;">
+              <div style="font-size: 20px; margin-bottom: 4px;">⚠️</div>
+              <div style="font-size: 14px; font-weight: 700; color: #FFFFFF; margin-bottom: 4px;">Account Locked</div>
+              <p style="font-size: 11px; color: #FCA5A5; line-height: 1.4; margin-bottom: 12px;">3 consecutive wrong PIN attempts detected. SafePay Shield locked this account to prevent Account Takeover (ATO).</p>
+              <button class="btn-neu-primary" style="padding: 10px 16px; font-size: 12px;" onclick="unlockAccountDemo()">Unlock Account (Demo)</button>
+            </div>
+
+            <!-- PIN Box & Keypad -->
+            <div id="pin-login-box" class="neu-card" style="text-align: center; margin-bottom: 16px;">
+              <div style="font-size: 12px; font-weight: 600; color: var(--text-secondary); margin-bottom: 12px;">ENTER 4-DIGIT PIN</div>
+              
+              <!-- 4 PIN Dots -->
+              <div id="login-pin-dots" style="display: flex; justify-content: center; gap: 14px; margin-bottom: 14px;">
+                <div class="pin-dot" style="width: 14px; height: 14px; border-radius: 50%; background: var(--bg-surface-elevated); box-shadow: var(--shadow-pressed);"></div>
+                <div class="pin-dot" style="width: 14px; height: 14px; border-radius: 50%; background: var(--bg-surface-elevated); box-shadow: var(--shadow-pressed);"></div>
+                <div class="pin-dot" style="width: 14px; height: 14px; border-radius: 50%; background: var(--bg-surface-elevated); box-shadow: var(--shadow-pressed);"></div>
+                <div class="pin-dot" style="width: 14px; height: 14px; border-radius: 50%; background: var(--bg-surface-elevated); box-shadow: var(--shadow-pressed);"></div>
+              </div>
+
+              <!-- Neumorphic Keypad -->
+              <div class="neu-numpad">
+                <button class="neu-key" type="button" onclick="handleLoginDigit('1')">1</button>
+                <button class="neu-key" type="button" onclick="handleLoginDigit('2')">2</button>
+                <button class="neu-key" type="button" onclick="handleLoginDigit('3')">3</button>
+                <button class="neu-key" type="button" onclick="handleLoginDigit('4')">4</button>
+                <button class="neu-key" type="button" onclick="handleLoginDigit('5')">5</button>
+                <button class="neu-key" type="button" onclick="handleLoginDigit('6')">6</button>
+                <button class="neu-key" type="button" onclick="handleLoginDigit('7')">7</button>
+                <button class="neu-key" type="button" onclick="handleLoginDigit('8')">8</button>
+                <button class="neu-key" type="button" onclick="handleLoginDigit('9')">9</button>
+                <button class="neu-key" type="button" style="font-size: 12px; font-weight: 700;" onclick="clearLoginPin()">CLR</button>
+                <button class="neu-key" type="button" onclick="handleLoginDigit('0')">0</button>
+                <button class="neu-key" type="button" onclick="backspaceLoginPin()">⌫</button>
+              </div>
+            </div>
+
+            <!-- Raised Continue Button -->
+            <button id="btn-submit-login" class="btn-neu-raised" onclick="submitLoginPin()">Sign In with SafePay</button>
+
+            <!-- Toggle to Sign Up -->
+            <div style="text-align: center; margin: 16px 0;">
+              <span style="font-size: 12px; color: var(--text-secondary);">Don't have an account? </span>
+              <button type="button" onclick="toggleAuthMode('register')" style="font-size: 12px; font-weight: 700; color: var(--accent-purple); background: none; border: none; cursor: pointer; text-decoration: underline;">Create account</button>
+            </div>
+
+            <!-- Demo Accounts Section (10 Seeded Personas) -->
+            <div class="signin-picker-container" style="margin-top: 20px;">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                <label class="signin-label" style="margin-bottom: 0;">Demo Accounts (Tap to Pre-fill):</label>
+                <span style="font-size: 10px; color: var(--accent-blue); font-weight: 600;">PIN required</span>
+              </div>
+              <p style="font-size: 11px; color: var(--text-muted); margin-bottom: 10px;">Tap an account to pre-fill its phone number. You must type the PIN on the keypad above.</p>
+              <div id="login-users-list" class="recent-avatars-row">
+                <!-- Populated by JS -->
+              </div>
+            </div>
+
+            <!-- Demo PINs Helper Card -->
+            <div class="neu-card" style="padding: 12px 14px; margin-top: 14px; background: rgba(245, 158, 11, 0.1); border: 1px dashed rgba(245, 158, 11, 0.35);">
+              <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 2px;">
+                <span style="font-size: 13px;">💡</span>
+                <span style="font-size: 12px; font-weight: 700; color: #FBBF24;">Demo PINs: 1234 (Evaluator Only)</span>
+              </div>
+              <p style="font-size: 11px; color: var(--text-secondary); line-height: 1.4;">All 10 seeded accounts use PIN <strong>1234</strong>. Mark clearly demo only.</p>
+            </div>
+          </div>
+
+          <!-- SIGN UP FORM VIEW (HIDDEN BY DEFAULT) -->
+          <div id="auth-signup-view" style="display: none;">
+            <div class="signin-heading-area">
+              <div class="signin-greeting">Join SafePay</div>
+              <h1 class="signin-title">Create Account</h1>
+            </div>
+
+            <div class="neu-card" style="padding: 16px; margin-bottom: 16px;">
+              <div style="margin-bottom: 12px;">
+                <label for="reg-name-input" style="font-size: 11px; font-weight: 600; color: var(--text-secondary); display: block; margin-bottom: 4px;">FULL NAME</label>
+                <input type="text" id="reg-name-input" placeholder="e.g. Priya Nair" style="width: 100%; background: var(--bg-input); border: none; border-radius: 12px; padding: 10px 14px; color: #FFFFFF; font-size: 14px;">
+              </div>
+              <div style="margin-bottom: 12px;">
+                <label for="reg-phone-input" style="font-size: 11px; font-weight: 600; color: var(--text-secondary); display: block; margin-bottom: 4px;">PHONE NUMBER (10 DIGITS)</label>
+                <input type="tel" id="reg-phone-input" placeholder="e.g. 9876501234" style="width: 100%; background: var(--bg-input); border: none; border-radius: 12px; padding: 10px 14px; color: #FFFFFF; font-size: 14px;">
+              </div>
+              <div style="margin-bottom: 12px;">
+                <label for="reg-city-input" style="font-size: 11px; font-weight: 600; color: var(--text-secondary); display: block; margin-bottom: 4px;">HOME CITY</label>
+                <input type="text" id="reg-city-input" placeholder="e.g. Mumbai, Delhi, Bengaluru" style="width: 100%; background: var(--bg-input); border: none; border-radius: 12px; padding: 10px 14px; color: #FFFFFF; font-size: 14px;">
+              </div>
+              <div style="margin-bottom: 6px;">
+                <label for="reg-pin-input" style="font-size: 11px; font-weight: 600; color: var(--text-secondary); display: block; margin-bottom: 4px;">4-DIGIT SECURITY PIN</label>
+                <input type="password" id="reg-pin-input" maxlength="4" placeholder="4-digit PIN" style="width: 100%; background: var(--bg-input); border: none; border-radius: 12px; padding: 10px 14px; color: #FFFFFF; font-size: 18px; letter-spacing: 4px; text-align: center;">
+              </div>
+            </div>
+
+            <!-- Error Banner -->
+            <div id="reg-error-msg" style="display: none; background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.35); border-radius: 12px; padding: 10px 14px; font-size: 12px; color: #FCA5A5; margin-bottom: 14px; text-align: center;"></div>
+
+            <button class="btn-neu-raised" onclick="submitRegister()">Create Account (Rs 5,000 Bonus)</button>
+
+            <div style="text-align: center; margin: 16px 0;">
+              <span style="font-size: 12px; color: var(--text-secondary);">Already have an account? </span>
+              <button type="button" onclick="toggleAuthMode('signin')" style="font-size: 12px; font-weight: 700; color: var(--accent-purple); background: none; border: none; cursor: pointer; text-decoration: underline;">Sign In</button>
+            </div>
           </div>
         </div>
       </section>
@@ -538,7 +603,10 @@
               <div id="profile-city" style="font-size: 11px; color: var(--accent-blue);">Delhi (Student)</div>
             </div>
           </div>
-          <button class="btn-neu-primary" style="padding: 10px; font-size: 12px;" onclick="switchUserAccount()">Switch Profile</button>
+          <button class="btn-neu-primary" style="padding: 12px; font-size: 13px; background: rgba(239, 68, 68, 0.16); color: #F87171; border: 1px solid rgba(239, 68, 68, 0.35); box-shadow: none; display: flex; align-items: center; justify-content: center; gap: 8px;" onclick="logout()">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+            Log Out of SafePay
+          </button>
         </div>
 
         <div class="neu-card" style="margin-bottom: 16px;">

@@ -9,12 +9,17 @@ let pendingPaymentPayload = null;
 let deferredPrompt = null;
 let activeBillPayItem = null;
 
-// Persistent Hide Balance Single Source of Truth
+// Persistent Hide Balance Single Source of Truth (Stored per user)
 let balanceHidden = false;
-try {
-  balanceHidden = localStorage.getItem("safepay_balance_hidden") === "true";
-} catch (e) {
-  balanceHidden = false;
+
+function initUserPreferences() {
+  if (!currentUser) return;
+  try {
+    balanceHidden = localStorage.getItem(`balanceHidden_${currentUser.id}`) === "true";
+  } catch (e) {
+    balanceHidden = false;
+  }
+  renderBalance(currentAccount ? currentAccount.balance : 0);
 }
 
 let autoRevealTimer = null;
@@ -70,9 +75,11 @@ function renderBalance(rawAmount) {
 
 function toggleBalanceVisibility() {
   balanceHidden = !balanceHidden;
-  try {
-    localStorage.setItem("safepay_balance_hidden", String(balanceHidden));
-  } catch (e) {}
+  if (currentUser) {
+    try {
+      localStorage.setItem(`balanceHidden_${currentUser.id}`, String(balanceHidden));
+    } catch (e) {}
+  }
 
   const balEl = document.getElementById("home-balance-amount");
   if (balEl) {
@@ -106,6 +113,78 @@ document.addEventListener("click", (e) => {
   }
 });
 
+// ----------------- INACTIVITY TIMER (5 MINUTES) -----------------
+let inactivityTimer = null;
+const INACTIVITY_TIMEOUT_MS = 5 * 60 * 1000; // 5 minutes
+
+function resetInactivityTimer() {
+  if (inactivityTimer) clearTimeout(inactivityTimer);
+  if (!currentUser) return;
+  inactivityTimer = setTimeout(handleInactivityTimeout, INACTIVITY_TIMEOUT_MS);
+}
+
+async function handleInactivityTimeout() {
+  if (!currentUser) return;
+  try {
+    await fetch("/api/logout", { method: "POST" });
+  } catch (e) {}
+  clearUserSessionState();
+  loadLoginUsers();
+  navigateTo("login");
+  const errEl = document.getElementById("login-error-msg");
+  if (errEl) {
+    errEl.textContent = "Session auto-locked due to 5 minutes of inactivity. Please sign in again.";
+    errEl.style.display = "block";
+  }
+}
+
+["mousedown", "mousemove", "keydown", "scroll", "touchstart", "click"].forEach((evt) => {
+  window.addEventListener(evt, resetInactivityTimer, { passive: true });
+});
+
+// Clear all in-memory UI state and caches when user logs in or logs out
+function clearUserSessionState() {
+  currentUser = null;
+  currentAccount = null;
+  selectedLoginUser = null;
+  allTxns = [];
+  loginPinBuffer = "";
+  updatePinDots("login-pin-dots", 0);
+
+  if (inactivityTimer) {
+    clearTimeout(inactivityTimer);
+    inactivityTimer = null;
+  }
+
+  const idInput = document.getElementById("login-identifier-input");
+  if (idInput) idInput.value = "";
+
+  const userCard = document.getElementById("login-selected-user-card");
+  if (userCard) userCard.style.display = "none";
+
+  const balEl = document.getElementById("home-balance-amount");
+  if (balEl) balEl.textContent = "₹0.00";
+  const histBalEl = document.getElementById("history-header-balance");
+  if (histBalEl) histBalEl.textContent = "₹0.00";
+  const profBalEl = document.getElementById("profile-header-balance");
+  if (profBalEl) profBalEl.textContent = "₹0.00";
+
+  const histList = document.getElementById("history-txns-list");
+  if (histList) histList.innerHTML = "";
+  const inboxList = document.getElementById("inbox-messages-list");
+  if (inboxList) inboxList.innerHTML = "";
+  const recentAvatars = document.getElementById("home-recent-avatars");
+  if (recentAvatars) recentAvatars.innerHTML = "";
+
+  const errEl = document.getElementById("login-error-msg");
+  if (errEl) {
+    errEl.textContent = "";
+    errEl.style.display = "none";
+  }
+  const lockedCard = document.getElementById("login-locked-card");
+  if (lockedCard) lockedCard.style.display = "none";
+}
+
 // ----------------- NAVIGATION & TABS -----------------
 
 function navigateTo(screenName) {
@@ -116,7 +195,13 @@ function navigateTo(screenName) {
     target.classList.add("active");
   }
 
-  // Update Bottom Nav
+  // Hide bottom navigation on login screen
+  const bottomNav = document.querySelector(".bottom-nav");
+  if (bottomNav) {
+    bottomNav.style.display = screenName === "login" ? "none" : "flex";
+  }
+
+  // Update Bottom Nav active item
   document.querySelectorAll(".nav-item").forEach((item) => {
     item.classList.toggle("active", item.getAttribute("data-screen") === screenName);
   });
@@ -174,18 +259,23 @@ async function initApp() {
   const sharedText = (urlParams.get("url") || "") + " " + (urlParams.get("text") || "") + " " + (urlParams.get("title") || "");
   const extracted = sharedText.match(/https?:\/\/[^\s<>"']+|www\.[^\s<>"']+/i);
 
+  // Check current session from server: never restore user from localStorage or auto-select
   try {
     const res = await fetch("/api/me");
     if (res.ok) {
       const data = await res.json();
       currentUser = data.user;
       currentAccount = data.account;
+      initUserPreferences();
+      resetInactivityTimer();
       navigateTo("home");
     } else {
+      clearUserSessionState();
       loadLoginUsers();
       navigateTo("login");
     }
   } catch (err) {
+    clearUserSessionState();
     loadLoginUsers();
     navigateTo("login");
   }
@@ -205,22 +295,13 @@ function updateClock() {
   if (el) el.textContent = `${hrs}:${mins}`;
 }
 
-// ----------------- LOGIN SCREEN -----------------
+// ----------------- SIGN IN & SIGN UP -----------------
 
 const AVATAR_COLORS = ["#29B6F6", "#F48FB1", "#26C6DA", "#FFCA28", "#8B5CF6", "#06B6D4", "#10B981"];
 
+// Disabled: quickSelectPersona no longer auto-signs in without a PIN
 async function quickSelectPersona(userId) {
-  try {
-    const res = await fetch("/api/users");
-    const data = await res.json();
-    const targetUser = data.users.find(u => u.id === userId);
-    if (targetUser) {
-      selectLoginUser(targetUser);
-      loginPinBuffer = "1234";
-      updatePinDots("login-pin-dots", 4);
-      setTimeout(submitLoginPin, 100);
-    }
-  } catch (e) {}
+  // Disabled as per security requirement - user must enter PIN manually
 }
 
 async function loadLoginUsers() {
@@ -228,12 +309,15 @@ async function loadLoginUsers() {
     const res = await fetch("/api/users");
     const data = await res.json();
     const container = document.getElementById("login-users-list");
+    if (!container) return;
     container.innerHTML = "";
 
     data.users.forEach((u, idx) => {
       const item = document.createElement("div");
       item.className = "avatar-square-item";
-      item.onclick = () => selectLoginUser(u);
+      item.style.cursor = "pointer";
+      item.title = `Tap to pre-fill ${u.name} (${u.phone})`;
+      item.onclick = () => selectDemoAccount(u);
 
       const color = AVATAR_COLORS[idx % AVATAR_COLORS.length];
       const initials = u.name.split(" ").map((n) => n[0]).join("").slice(0, 2);
@@ -243,16 +327,42 @@ async function loadLoginUsers() {
         <div class="avatar-square-name">${u.name.split(" ")[0]}</div>
       `;
       container.appendChild(item);
-
-      if (idx === 0) selectLoginUser(u);
+      // NOTE: Do NOT auto-select or auto-fill here!
     });
   } catch (e) {}
 }
 
-function selectLoginUser(user) {
+function selectDemoAccount(user) {
   selectedLoginUser = user;
-  document.getElementById("selected-user-name").textContent = user.name;
-  document.getElementById("selected-user-upi").textContent = `${user.upi_id} • Demo PIN: 1234`;
+  const input = document.getElementById("login-identifier-input");
+  if (input) input.value = user.phone;
+
+  const card = document.getElementById("login-selected-user-card");
+  if (card) {
+    card.style.display = "flex";
+    const nameEl = document.getElementById("selected-user-name");
+    if (nameEl) nameEl.textContent = user.name;
+    const subEl = document.getElementById("selected-user-sub");
+    if (subEl) subEl.textContent = `${user.upi_id} • ${user.home_city}`;
+    const avEl = document.getElementById("selected-user-avatar");
+    if (avEl) avEl.textContent = user.name.split(" ").map((n) => n[0]).join("").slice(0, 2);
+  }
+
+  // Reset error / locked cards
+  const errEl = document.getElementById("login-error-msg");
+  if (errEl) errEl.style.display = "none";
+  const lockEl = document.getElementById("login-locked-card");
+  if (lockEl) lockEl.style.display = "none";
+
+  clearLoginPin();
+}
+
+function clearSelectedDemoUser() {
+  selectedLoginUser = null;
+  const card = document.getElementById("login-selected-user-card");
+  if (card) card.style.display = "none";
+  const input = document.getElementById("login-identifier-input");
+  if (input) input.value = "";
   clearLoginPin();
 }
 
@@ -287,30 +397,185 @@ function updatePinDots(containerId, count) {
 }
 
 async function submitLoginPin() {
-  if (!selectedLoginUser) return;
+  const input = document.getElementById("login-identifier-input");
+  const identifier = input && input.value.trim() ? input.value.trim() : (selectedLoginUser ? selectedLoginUser.phone : "");
+
+  const errEl = document.getElementById("login-error-msg");
+  const lockEl = document.getElementById("login-locked-card");
+
+  if (!identifier) {
+    if (errEl) {
+      errEl.textContent = "Please enter your phone number or UPI ID, or tap a demo account below.";
+      errEl.style.display = "block";
+    }
+    return;
+  }
+
+  if (loginPinBuffer.length !== 4) {
+    if (errEl) {
+      errEl.textContent = "Please enter your 4-digit PIN.";
+      errEl.style.display = "block";
+    }
+    return;
+  }
+
   try {
     const res = await fetch("/api/login", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ user_id: selectedLoginUser.id, pin: loginPinBuffer })
+      body: JSON.stringify({ identifier: identifier, pin: loginPinBuffer })
     });
     const data = await res.json();
+
     if (res.ok) {
-      const meRes = await fetch("/api/me");
-      const meData = await meRes.json();
-      currentUser = meData.user;
-      currentAccount = meData.account;
       clearLoginPin();
+      if (errEl) errEl.style.display = "none";
+      if (lockEl) lockEl.style.display = "none";
+
+      currentUser = data.user;
+      currentAccount = data.account;
+      initUserPreferences();
+      resetInactivityTimer();
       navigateTo("home");
     } else {
       triggerPinShake("pin-login-box");
       clearLoginPin();
-      alert(data.error || "Login failed");
+
+      if (data.locked) {
+        if (lockEl) lockEl.style.display = "block";
+        if (errEl) errEl.style.display = "none";
+      } else {
+        if (errEl) {
+          errEl.textContent = data.error || "Invalid PIN. Please try again.";
+          errEl.style.display = "block";
+        }
+      }
     }
   } catch (err) {
     triggerPinShake("pin-login-box");
     clearLoginPin();
+    if (errEl) {
+      errEl.textContent = "Login failed. Please check connection.";
+      errEl.style.display = "block";
+    }
   }
+}
+
+async function unlockAccountDemo() {
+  const input = document.getElementById("login-identifier-input");
+  const identifier = input && input.value.trim() ? input.value.trim() : (selectedLoginUser ? selectedLoginUser.phone : "");
+
+  if (!identifier) {
+    alert("Please enter phone number or UPI ID to unlock.");
+    return;
+  }
+
+  try {
+    const res = await fetch("/api/unlock", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ identifier: identifier })
+    });
+    const data = await res.json();
+    if (res.ok) {
+      const lockEl = document.getElementById("login-locked-card");
+      if (lockEl) lockEl.style.display = "none";
+      const errEl = document.getElementById("login-error-msg");
+      if (errEl) {
+        errEl.textContent = "Account unlocked! Please enter PIN 1234 to sign in.";
+        errEl.style.color = "#86EFAC";
+        errEl.style.background = "rgba(34, 197, 94, 0.15)";
+        errEl.style.borderColor = "rgba(34, 197, 94, 0.35)";
+        errEl.style.display = "block";
+      }
+      clearLoginPin();
+    } else {
+      alert(data.error || "Could not unlock account.");
+    }
+  } catch (e) {
+    alert("Failed to communicate with unlock service.");
+  }
+}
+
+function toggleAuthMode(mode) {
+  const signinView = document.getElementById("auth-signin-view");
+  const signupView = document.getElementById("auth-signup-view");
+  const errEl = document.getElementById("login-error-msg");
+  const regErrEl = document.getElementById("reg-error-msg");
+
+  if (errEl) errEl.style.display = "none";
+  if (regErrEl) regErrEl.style.display = "none";
+
+  if (mode === "register") {
+    if (signinView) signinView.style.display = "none";
+    if (signupView) signupView.style.display = "block";
+  } else {
+    if (signinView) signinView.style.display = "block";
+    if (signupView) signupView.style.display = "none";
+  }
+}
+
+async function submitRegister() {
+  const name = document.getElementById("reg-name-input") ? document.getElementById("reg-name-input").value.trim() : "";
+  const phone = document.getElementById("reg-phone-input") ? document.getElementById("reg-phone-input").value.trim() : "";
+  const city = document.getElementById("reg-city-input") ? document.getElementById("reg-city-input").value.trim() : "";
+  const pin = document.getElementById("reg-pin-input") ? document.getElementById("reg-pin-input").value.trim() : "";
+  const errEl = document.getElementById("reg-error-msg");
+
+  if (!name || !phone || !city || !pin) {
+    if (errEl) {
+      errEl.textContent = "All fields (Name, Phone, City, 4-digit PIN) are required.";
+      errEl.style.display = "block";
+    }
+    return;
+  }
+
+  if (pin.length !== 4 || !/^\d{4}$/.test(pin)) {
+    if (errEl) {
+      errEl.textContent = "PIN must be exactly 4 numeric digits.";
+      errEl.style.display = "block";
+    }
+    return;
+  }
+
+  try {
+    const res = await fetch("/api/register", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ name, phone, home_city: city, pin })
+    });
+    const data = await res.json();
+    if (res.ok) {
+      currentUser = data.user;
+      currentAccount = data.account;
+      initUserPreferences();
+      resetInactivityTimer();
+      navigateTo("home");
+    } else {
+      if (errEl) {
+        errEl.textContent = data.error || "Registration failed.";
+        errEl.style.display = "block";
+      }
+    }
+  } catch (e) {
+    if (errEl) {
+      errEl.textContent = "Registration service unreachable.";
+      errEl.style.display = "block";
+    }
+  }
+}
+
+async function logout() {
+  try {
+    await fetch("/api/logout", { method: "POST" });
+  } catch (e) {}
+  clearUserSessionState();
+  loadLoginUsers();
+  navigateTo("login");
+}
+
+function switchUserAccount() {
+  logout();
 }
 
 function triggerPinShake(elementId) {
@@ -359,7 +624,7 @@ async function loadHomeData() {
       `<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M6 21v-2a6 6 0 0 1 12 0v2"/></svg>`
     ];
 
-    const displayPayees = pData.payees.slice(0, 4);
+    const displayPayees = (pData.payees || []).slice(0, 4);
     displayPayees.forEach((p, idx) => {
       const item = document.createElement("div");
       item.className = "avatar-square-item";
@@ -646,8 +911,9 @@ function renderHistoryCards(txns) {
     }
 
     const color = AVATAR_COLORS[idx % AVATAR_COLORS.length];
-    const payeeName = tx.receiver_name || tx.receiver_upi;
-    const initials = payeeName.slice(0, 2).toUpperCase();
+    const displayName = isCredit ? (tx.sender_name || tx.sender_upi || "Received") : (tx.receiver_name || tx.receiver_upi);
+    const displaySub = isCredit ? `Received from ${tx.sender_upi || tx.sender_name || "sender"}` : `${tx.receiver_upi}${tx.note ? ' • ' + tx.note : ''}`;
+    const initials = displayName.slice(0, 2).toUpperCase();
 
     card.innerHTML = `
       <div class="history-top-row">
@@ -659,12 +925,12 @@ function renderHistoryCards(txns) {
       </div>
       <div class="history-dashed-divider"></div>
       <div class="history-bottom-row">
-        <div class="history-sub-avatar" style="background: ${isBlocked ? '#F59E0B' : color};">
+        <div class="history-sub-avatar" style="background: ${isBlocked ? '#F59E0B' : (isCredit ? '#22C55E' : color)};">
           ${initials}
         </div>
         <div style="overflow: hidden;">
-          <div class="history-payee-name">${payeeName}</div>
-          <div class="history-payee-sub">${tx.receiver_upi}${tx.note ? ' • ' + tx.note : ''}</div>
+          <div class="history-payee-name">${displayName}</div>
+          <div class="history-payee-sub">${displaySub}</div>
         </div>
       </div>
     `;
