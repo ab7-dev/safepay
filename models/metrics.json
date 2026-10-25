@@ -1,0 +1,160 @@
+{
+  "best_model": "RandomForest",
+  "random_forest": {
+    "accuracy": 0.9793,
+    "precision": 1.0,
+    "recall": 0.7923,
+    "f1": 0.8841,
+    "pr_auc": 0.8608,
+    "confusion_matrix": [
+      [
+        1174,
+        0
+      ],
+      [
+        27,
+        103
+      ]
+    ],
+    "cv_metrics": {
+      "accuracy": {
+        "mean": 0.9758,
+        "std": 0.0025
+      },
+      "precision": {
+        "mean": 0.9636,
+        "std": 0.0243
+      },
+      "recall": {
+        "mean": 0.7892,
+        "std": 0.0288
+      },
+      "f1": {
+        "mean": 0.8671,
+        "std": 0.0157
+      },
+      "pr_auc": {
+        "mean": 0.8306,
+        "std": 0.0215
+      }
+    },
+    "feature_importances": {
+      "amount_ratio": 0.1014,
+      "hour": 0.0744,
+      "txns_last_10min": 0.0054,
+      "city_mismatch": 0.2587,
+      "is_new_device": 0.2472,
+      "new_payee": 0.0,
+      "merchant_risk": 0.313,
+      "failed_pin_count": 0.0,
+      "recent_pin_reset": 0.0
+    }
+  },
+  "hist_gradient_boosting": {
+    "accuracy": 0.9686,
+    "precision": 0.8739,
+    "recall": 0.8,
+    "f1": 0.8353,
+    "pr_auc": 0.8516,
+    "confusion_matrix": [
+      [
+        1159,
+        15
+      ],
+      [
+        26,
+        104
+      ]
+    ],
+    "cv_metrics": {
+      "accuracy": {
+        "mean": 0.9532,
+        "std": 0.0047
+      },
+      "precision": {
+        "mean": 0.7524,
+        "std": 0.0317
+      },
+      "recall": {
+        "mean": 0.7968,
+        "std": 0.0317
+      },
+      "f1": {
+        "mean": 0.7732,
+        "std": 0.0214
+      },
+      "pr_auc": {
+        "mean": 0.835,
+        "std": 0.0239
+      }
+    }
+  },
+  "url_model": {
+    "accuracy": 0.96,
+    "precision": 0.9662,
+    "recall": 0.9533,
+    "f1": 0.9597,
+    "confusion_matrix": [
+      [
+        290,
+        10
+      ],
+      [
+        14,
+        286
+      ]
+    ]
+  },
+  "text_model": {
+    "accuracy": 0.9781,
+    "precision": 0.9812,
+    "recall": 0.9752,
+    "f1": 0.9782,
+    "confusion_matrix": [
+      [
+        156,
+        3
+      ],
+      [
+        4,
+        157
+      ]
+    ]
+  },
+  "heldout": {
+    "url_model": {
+      "total_samples": 120,
+      "accuracy": 0.9,
+      "precision": 0.9444,
+      "recall": 0.85,
+      "f1": 0.8947,
+      "confusion_matrix": [
+        [
+          57,
+          3
+        ],
+        [
+          9,
+          51
+        ]
+      ]
+    },
+    "text_model": {
+      "total_samples": 70,
+      "accuracy": 0.8857,
+      "precision": 0.8293,
+      "recall": 0.9714,
+      "f1": 0.8947,
+      "confusion_matrix": [
+        [
+          28,
+          7
+        ],
+        [
+          1,
+          34
+        ]
+      ]
+    }
+  }
+}

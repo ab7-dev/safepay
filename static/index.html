@@ -1,0 +1,717 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>SafePay - AI Fraud Shield</title>
+  <link rel="manifest" href="/manifest.webmanifest">
+  <meta name="theme-color" content="#4B2FBF">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Noto+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/app.css">
+</head>
+<body>
+  <div class="device-viewport">
+    <!-- Top Status Bar & Demo Ribbon -->
+    <header class="status-bar">
+      <span id="status-clock">09:41</span>
+      <span class="demo-ribbon">DEMO • NO REAL MONEY</span>
+      <div style="display: flex; gap: 6px; align-items: center;">
+        <svg width="15" height="11" viewBox="0 0 15 11" fill="none"><path d="M1 10.5H13.5C14.05 10.5 14.5 10.05 14.5 9.5V1.5C14.5 0.95 14.05 0.5 13.5 0.5H1C0.45 0.5 0 0.95 0 1.5V9.5C0 10.05 0.45 10.5 1 10.5Z" stroke="currentColor"/><path d="M2 3H11V8H2V3Z" fill="currentColor"/></svg>
+      </div>
+    </header>
+
+    <!-- Main Screens Container -->
+    <main class="app-content">
+      
+      <!-- SCREEN 1: SIGN IN (MATCHING REFERENCE 1 LEFT PHONE) -->
+      <section id="screen-login" class="screen active">
+        <div class="signin-screen-box">
+          <!-- SafePay Logo Mark: Shield-S with purple-amber gradient -->
+          <div class="brand-logo-mark">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none">
+              <path d="M12 2L4 5.5V11.5C4 16.5 7.5 21 12 22C16.5 21 20 16.5 20 11.5V5.5L12 2Z" fill="url(#logo-grad)"/>
+              <path d="M14.5 8.5C14.5 8.5 10 7.8 9.5 10C9 12 15 11.8 14.5 14.2C14 16.5 9.5 15.5 9.5 15.5" stroke="#FFFFFF" stroke-width="2.2" stroke-linecap="round"/>
+              <defs>
+                <linearGradient id="logo-grad" x1="4" y1="2" x2="20" y2="22" gradientUnits="userSpaceOnUse">
+                  <stop stop-color="#F59E0B"/>
+                  <stop offset="1" stop-color="#6C4DFF"/>
+                </linearGradient>
+              </defs>
+            </svg>
+          </div>
+
+          <div class="signin-heading-area">
+            <div class="signin-greeting">Hi Mate,</div>
+            <h1 class="signin-title">Sign in Now</h1>
+          </div>
+
+          <!-- Profile Picker -->
+          <div class="signin-picker-container">
+            <label class="signin-label">Select Profile Account:</label>
+            <div id="login-users-list" class="recent-avatars-row">
+              <!-- Populated by JS -->
+            </div>
+          </div>
+
+          <!-- PIN Box -->
+          <div id="pin-login-box" class="neu-card" style="text-align: center; margin-bottom: 20px;">
+            <div id="selected-user-name" style="font-size: 15px; font-weight: 700; color: var(--text-primary); margin-bottom: 2px;">Aarav Sharma</div>
+            <div id="selected-user-upi" style="font-size: 11px; color: var(--text-secondary); margin-bottom: 14px;">aarav@oksbi • Demo PIN: 1234</div>
+            
+            <!-- 4 PIN Dots -->
+            <div id="login-pin-dots" style="display: flex; justify-content: center; gap: 14px; margin-bottom: 14px;">
+              <div class="pin-dot" style="width: 14px; height: 14px; border-radius: 50%; background: var(--bg-surface-elevated); box-shadow: var(--shadow-pressed);"></div>
+              <div class="pin-dot" style="width: 14px; height: 14px; border-radius: 50%; background: var(--bg-surface-elevated); box-shadow: var(--shadow-pressed);"></div>
+              <div class="pin-dot" style="width: 14px; height: 14px; border-radius: 50%; background: var(--bg-surface-elevated); box-shadow: var(--shadow-pressed);"></div>
+              <div class="pin-dot" style="width: 14px; height: 14px; border-radius: 50%; background: var(--bg-surface-elevated); box-shadow: var(--shadow-pressed);"></div>
+            </div>
+
+            <!-- Neumorphic Keypad -->
+            <div class="neu-numpad">
+              <button class="neu-key" onclick="handleLoginDigit('1')">1</button>
+              <button class="neu-key" onclick="handleLoginDigit('2')">2</button>
+              <button class="neu-key" onclick="handleLoginDigit('3')">3</button>
+              <button class="neu-key" onclick="handleLoginDigit('4')">4</button>
+              <button class="neu-key" onclick="handleLoginDigit('5')">5</button>
+              <button class="neu-key" onclick="handleLoginDigit('6')">6</button>
+              <button class="neu-key" onclick="handleLoginDigit('7')">7</button>
+              <button class="neu-key" onclick="handleLoginDigit('8')">8</button>
+              <button class="neu-key" onclick="handleLoginDigit('9')">9</button>
+              <button class="neu-key" style="font-size: 12px; font-weight: 700;" onclick="clearLoginPin()">CLR</button>
+              <button class="neu-key" onclick="handleLoginDigit('0')">0</button>
+              <button class="neu-key" onclick="backspaceLoginPin()">⌫</button>
+            </div>
+          </div>
+
+          <!-- Raised Continue Button -->
+          <button class="btn-neu-raised" onclick="submitLoginPin()">Continue</button>
+
+          <!-- Or Continue with Divider -->
+          <div class="or-divider">
+            <span>Or Continue with</span>
+          </div>
+
+          <!-- Raised Full-Width Persona Buttons -->
+          <div class="quick-persona-buttons">
+            <button class="btn-persona-raised" onclick="quickSelectPersona(1)">
+              <div class="persona-icon" style="background: #29B6F6;">AS</div>
+              <div class="persona-info">
+                <div class="persona-title">Aarav Sharma (Student)</div>
+                <div class="persona-sub">aarav@oksbi • Delhi</div>
+              </div>
+              <span class="persona-arrow">→</span>
+            </button>
+            <button class="btn-persona-raised" onclick="quickSelectPersona(2)">
+              <div class="persona-icon" style="background: #F48FB1;">RM</div>
+              <div class="persona-info">
+                <div class="persona-title">Rohan Mehta (Merchant)</div>
+                <div class="persona-sub">rohan.store@icici • Mumbai</div>
+              </div>
+              <span class="persona-arrow">→</span>
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- SCREEN 2: HOME (MATCHING REFERENCE HOME WITH PURPLE HEADER & SHEET) -->
+      <section id="screen-home" class="screen">
+        <!-- Purple Top Area -->
+        <div class="purple-hero-area">
+          <div class="home-top-nav">
+            <!-- Hamburger Menu Icon -->
+            <button class="icon-btn" onclick="navigateTo('profile')" title="Menu">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+            </button>
+
+            <!-- Centered PAY | SHIELD Pill Toggle -->
+            <div id="home-pill-toggle" class="pill-toggle-container">
+              <div class="pill-slider"></div>
+              <button class="pill-btn pill-btn-pay" onclick="switchHomeTab('PAY')">PAY</button>
+              <button class="pill-btn pill-btn-shield" onclick="switchHomeTab('SHIELD')">SHIELD</button>
+            </div>
+
+            <!-- Search Icon Button -->
+            <button class="icon-btn" onclick="navigateTo('history')" title="Search Transactions">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            </button>
+          </div>
+
+          <!-- Raised Neumorphic Balance Card -->
+          <div class="raised-balance-card" id="balance-card-container">
+            <div class="balance-top-row">
+              <div class="balance-label">Available Balance</div>
+              <div class="balance-val-group">
+                <div class="balance-amount-text" id="home-balance-amount">₹4,500.00</div>
+                <button id="btn-toggle-balance" class="balance-eye-btn" aria-label="Toggle Balance Visibility" aria-pressed="false">
+                  <svg id="eye-icon-svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                    <circle cx="12" cy="12" r="3"/>
+                  </svg>
+                </button>
+              </div>
+            </div>
+
+            <!-- 4 Quick Actions Row: Pay, Req., Add, History -->
+            <div class="balance-actions-row">
+              <div class="bal-action-item" onclick="navigateTo('send')">
+                <div class="bal-action-icon">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>
+                </div>
+                <span class="bal-action-label">Pay</span>
+              </div>
+              <div class="bal-action-item" onclick="openRequestModal()">
+                <div class="bal-action-icon">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><polyline points="17 13 12 18 7 13"/><line x1="12" y1="6" x2="12" y2="18"/></svg>
+                </div>
+                <span class="bal-action-label">Req.</span>
+              </div>
+              <div class="bal-action-item" onclick="showTopupModal()">
+                <div class="bal-action-icon">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                </div>
+                <span class="bal-action-label">Add</span>
+              </div>
+              <div class="bal-action-item" onclick="navigateTo('history')">
+                <div class="bal-action-icon">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                </div>
+                <span class="bal-action-label">History</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Overlapping Dark Sheet with Drag Handle -->
+        <div class="dark-sheet-content">
+          <div class="sheet-drag-handle"></div>
+
+          <!-- SUB-VIEW 1: PAY TAB (Default) -->
+          <div id="subview-pay">
+            <!-- Quick Pay Card (4x2 icon grid matching reference) -->
+            <div class="neu-card">
+              <div class="section-title">Quick pay</div>
+              <div class="quick-pay-grid">
+                <div class="quick-pay-item" onclick="openBillPay('Recharge', 'Jio Prepaid Mobile', 299)">
+                  <div class="quick-pay-icon-box">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
+                  </div>
+                  <span class="quick-pay-label">Recharge</span>
+                </div>
+                <div class="quick-pay-item" onclick="openBillPay('DTH', 'Tata Play HD', 450)">
+                  <div class="quick-pay-icon-box">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="7" width="20" height="15" rx="2" ry="2"/><polyline points="17 2 12 7 7 2"/></svg>
+                  </div>
+                  <span class="quick-pay-label">DTH</span>
+                </div>
+                <div class="quick-pay-item" onclick="openBillPay('Electricity', 'TNEB Power Board', 1420)">
+                  <div class="quick-pay-icon-box">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 18h6"/><path d="M10 22h4"/><path d="M15.09 14c.18-.98.65-1.74 1.41-2.5A4.65 4.65 0 0 0 18 8 6 6 0 0 0 6 8c0 1 .23 2.23 1.5 3.5A4.61 4.61 0 0 1 8.91 14"/></svg>
+                  </div>
+                  <span class="quick-pay-label">Electricity</span>
+                </div>
+                <div class="quick-pay-item" onclick="openBillPay('Credit Card', 'HDFC Bank Card', 5200)">
+                  <div class="quick-pay-icon-box">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+                  </div>
+                  <span class="quick-pay-label">Credit Card</span>
+                </div>
+                <div class="quick-pay-item" onclick="openBillPay('Train', 'IRCTC Indian Railways', 720)">
+                  <div class="quick-pay-icon-box">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="4" y="3" width="16" height="16" rx="2"/><path d="M4 11h16"/><path d="M12 3v8"/><path d="m8 19-2 3"/><path d="m16 19 2 3"/><circle cx="8" cy="15" r="1"/><circle cx="16" cy="15" r="1"/></svg>
+                  </div>
+                  <span class="quick-pay-label">Train</span>
+                </div>
+                <div class="quick-pay-item" onclick="openBillPay('Bus', 'RedBus Express Ticket', 550)">
+                  <div class="quick-pay-icon-box">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 6v6"/><path d="M16 6v6"/><rect x="4" y="3" width="16" height="16" rx="2"/><circle cx="7" cy="15" r="1"/><circle cx="17" cy="15" r="1"/></svg>
+                  </div>
+                  <span class="quick-pay-label">Bus</span>
+                </div>
+                <div class="quick-pay-item" onclick="openBillPay('Flight', 'MakeMyTrip Airlines', 3800)">
+                  <div class="quick-pay-icon-box">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.2z"/></svg>
+                  </div>
+                  <span class="quick-pay-label">Flight</span>
+                </div>
+                <div class="quick-pay-item" onclick="navigateTo('scenarios')">
+                  <div class="quick-pay-icon-box">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="1"/><circle cx="12" cy="5" r="1"/><circle cx="12" cy="19" r="1"/><circle cx="5" cy="12" r="1"/><circle cx="19" cy="12" r="1"/></svg>
+                  </div>
+                  <span class="quick-pay-label">More</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Promo Carousel -->
+            <div class="promo-carousel">
+              <div class="promo-card purple" onclick="showTopupModal()">
+                <div class="promo-card-icon">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="1.8"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+                </div>
+                <div class="promo-text-box">
+                  <h4>Pay with SafePay & Get 5% Cashback</h4>
+                  <p>Guaranteed instant rewards on verified merchants</p>
+                </div>
+              </div>
+              <div class="promo-card blue" onclick="switchHomeTab('SHIELD')">
+                <div class="promo-card-icon">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="1.8"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                </div>
+                <div class="promo-text-box">
+                  <h4>SafePay Shield Protected</h4>
+                  <p id="promo-shield-blocked-text">Active multi-vector threat interception</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Recent Avatars (Rounded-Square 56px, radius 16px) -->
+            <div class="neu-card">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                <div class="section-title" style="margin-bottom: 0;">Recent</div>
+                <span style="font-size: 12px; color: var(--accent-purple); font-weight: 600; cursor: pointer;" onclick="navigateTo('send')">View all</span>
+              </div>
+              <div class="recent-avatars-row" id="home-recent-avatars">
+                <!-- Populated by JS -->
+              </div>
+            </div>
+          </div>
+
+          <!-- SUB-VIEW 2: SHIELD TAB (When SHIELD pill is active) -->
+          <div id="subview-shield" style="display: none;">
+            <div class="neu-card" style="border: 1px solid rgba(108, 77, 255, 0.3);">
+              <div style="display: flex; align-items: center; gap: 14px; margin-bottom: 14px;">
+                <div style="width: 48px; height: 48px; border-radius: 16px; background: rgba(108, 77, 255, 0.2); color: #818CF8; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                </div>
+                <div>
+                  <h3 style="font-size: 15px; font-weight: 700;">SafePay AI Shield</h3>
+                  <p style="font-size: 11px; color: var(--color-success); font-weight: 600;">Active • 4-Layer Link & Transaction Guard</p>
+                </div>
+              </div>
+
+              <!-- Input Pill Box -->
+              <div style="display: flex; gap: 8px; background: var(--bg-input); border-radius: var(--radius-pill); padding: 6px 6px 6px 14px; border: var(--border-card); margin-bottom: 12px;">
+                <input type="text" id="shield-tab-input" placeholder="Paste link or message to check..." style="flex: 1; background: transparent; border: none; outline: none; color: #FFFFFF; font-size: 13px;">
+                <button class="btn-neu-primary" style="width: auto; padding: 8px 18px; font-size: 12px;" onclick="runTabShieldCheck()">Check</button>
+              </div>
+            </div>
+
+            <!-- 5 Demo Scenario Attacks Cards -->
+            <div class="section-title">Attack Simulation Scenarios</div>
+            <div style="display: flex; flex-direction: column; gap: 12px; margin-bottom: 24px;">
+              <div class="neu-card" style="padding: 16px; margin-bottom: 0;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                  <span style="font-weight: 700; font-size: 13px;">1. Phishing SMS Link</span>
+                  <span style="font-size: 10px; font-weight: 700; color: #F87171; background: rgba(239, 68, 68, 0.15); padding: 2px 8px; border-radius: 99px;">PHISHING</span>
+                </div>
+                <p style="font-size: 11px; margin-bottom: 10px;">KYC suspension threat link: paytm-secure-kyc.xyz</p>
+                <button class="btn-neu-primary" style="padding: 10px; font-size: 12px;" onclick="runAttackScenario('phishing')">Run Phishing Attack</button>
+              </div>
+
+              <div class="neu-card" style="padding: 16px; margin-bottom: 0;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                  <span style="font-weight: 700; font-size: 13px;">2. Fake UPI QR (Collect Scam)</span>
+                  <span style="font-size: 10px; font-weight: 700; color: #FBBF24; background: rgba(245, 158, 11, 0.15); padding: 2px 8px; border-radius: 99px;">COLLECT</span>
+                </div>
+                <p style="font-size: 11px; margin-bottom: 10px;">UPI QR with mode=02 collect request for Rs 12,000</p>
+                <button class="btn-neu-primary" style="padding: 10px; font-size: 12px;" onclick="runAttackScenario('upi_qr')">Run QR Collect Attack</button>
+              </div>
+
+              <div class="neu-card" style="padding: 16px; margin-bottom: 0;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                  <span style="font-weight: 700; font-size: 13px;">3. Account Takeover (ATO)</span>
+                  <span style="font-size: 10px; font-weight: 700; color: #F87171; background: rgba(239, 68, 68, 0.15); padding: 2px 8px; border-radius: 99px;">ATO</span>
+                </div>
+                <p style="font-size: 11px; margin-bottom: 10px;">New device + location mismatch attempting large drain</p>
+                <button class="btn-neu-primary" style="padding: 10px; font-size: 12px;" onclick="runAttackScenario('ato')">Run ATO Attack</button>
+              </div>
+
+              <div class="neu-card" style="padding: 16px; margin-bottom: 0;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                  <span style="font-weight: 700; font-size: 13px;">4. Chargeback Abuse History</span>
+                  <span style="font-size: 10px; font-weight: 700; color: #FBBF24; background: rgba(245, 158, 11, 0.15); padding: 2px 8px; border-radius: 99px;">DISPUTES</span>
+                </div>
+                <p style="font-size: 11px; margin-bottom: 10px;">High dispute-to-purchase ratio profile test</p>
+                <button class="btn-neu-primary" style="padding: 10px; font-size: 12px;" onclick="runAttackScenario('chargeback')">Run Chargeback Test</button>
+              </div>
+
+              <div class="neu-card" style="padding: 16px; margin-bottom: 0;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                  <span style="font-weight: 700; font-size: 13px;">5. Business Email Compromise (BEC)</span>
+                  <span style="font-size: 10px; font-weight: 700; color: #F87171; background: rgba(239, 68, 68, 0.15); padding: 2px 8px; border-radius: 99px;">BEC</span>
+                </div>
+                <p style="font-size: 11px; margin-bottom: 10px;">Urgent CEO invoice wire request to new vendor</p>
+                <button class="btn-neu-primary" style="padding: 10px; font-size: 12px;" onclick="runAttackScenario('bec')">Run BEC Attack</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SCREEN 3: PAYMENT HISTORY (MATCHING REFERENCE 2 RIGHT PHONE) -->
+      <section id="screen-history" class="screen" style="padding: 16px 20px;">
+        <div class="screen-header-bar">
+          <div style="display: flex; align-items: center; gap: 14px;">
+            <button class="icon-btn" onclick="navigateTo('home')">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+            </button>
+            <h2 class="screen-title">Payment History</h2>
+          </div>
+          <div id="history-header-balance" class="header-bal-badge">₹0.00</div>
+        </div>
+
+        <!-- Filter Chips: All, Sent, Received, Blocked -->
+        <div class="filter-chips-row">
+          <div class="filter-chip active" onclick="filterHistory('ALL')">All</div>
+          <div class="filter-chip" onclick="filterHistory('DEBIT')">Sent</div>
+          <div class="filter-chip" onclick="filterHistory('CREDIT')">Received</div>
+          <div class="filter-chip" onclick="filterHistory('BLOCKED')">Blocked</div>
+        </div>
+
+        <!-- Dashed Divider Cards Container -->
+        <div id="history-txns-list">
+          <!-- Populated by JS -->
+        </div>
+      </section>
+
+      <!-- SCREEN 4: SEND MONEY -->
+      <section id="screen-send" class="screen" style="padding: 16px 20px;">
+        <div style="display: flex; align-items: center; gap: 14px; margin-bottom: 18px;">
+          <button class="icon-btn" onclick="navigateTo('home')">←</button>
+          <h2 style="font-size: 20px; font-weight: 700;">Pay with Shield</h2>
+        </div>
+
+        <div class="neu-card" style="padding: 14px 18px; margin-bottom: 16px;">
+          <label style="font-size: 11px; font-weight: 600; color: var(--text-secondary); text-transform: uppercase;">Recipient UPI ID</label>
+          <input type="text" id="send-to-upi" placeholder="swiggy@icici or 9876543210@upi" style="width: 100%; background: transparent; border: none; outline: none; color: #FFFFFF; font-size: 16px; font-weight: 600; padding: 6px 0;">
+        </div>
+
+        <div style="text-align: center; margin: 18px 0;">
+          <span style="font-size: 20px; color: var(--text-secondary); vertical-align: top; margin-right: 2px;">₹</span>
+          <span id="send-amount-display" style="font-size: 42px; font-weight: 700; letter-spacing: -1px;">0</span>
+          <input type="text" id="send-note-input" placeholder="Add a note (e.g. food, bill, rent)" style="display: block; width: 85%; margin: 12px auto 0 auto; background: var(--bg-surface); border: var(--border-card); border-radius: var(--radius-pill); padding: 8px 16px; color: #FFFFFF; font-size: 13px; text-align: center;">
+        </div>
+
+        <div class="neu-numpad">
+          <button class="neu-key" onclick="handleSendDigit('1')">1</button>
+          <button class="neu-key" onclick="handleSendDigit('2')">2</button>
+          <button class="neu-key" onclick="handleSendDigit('3')">3</button>
+          <button class="neu-key" onclick="handleSendDigit('4')">4</button>
+          <button class="neu-key" onclick="handleSendDigit('5')">5</button>
+          <button class="neu-key" onclick="handleSendDigit('6')">6</button>
+          <button class="neu-key" onclick="handleSendDigit('7')">7</button>
+          <button class="neu-key" onclick="handleSendDigit('8')">8</button>
+          <button class="neu-key" onclick="handleSendDigit('9')">9</button>
+          <button class="neu-key" onclick="handleSendDigit('.')">.</button>
+          <button class="neu-key" onclick="handleSendDigit('0')">0</button>
+          <button class="neu-key" onclick="backspaceSendDigit()">⌫</button>
+        </div>
+
+        <button class="btn-neu-primary" style="margin-top: 24px;" onclick="runSendPreview()">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          Scan & Pay
+        </button>
+      </section>
+
+      <!-- SCREEN 5: SCAN QR -->
+      <section id="screen-scan" class="screen" style="padding: 16px 20px;">
+        <div style="display: flex; align-items: center; gap: 14px; margin-bottom: 18px;">
+          <button class="icon-btn" onclick="navigateTo('home')">←</button>
+          <h2 style="font-size: 20px; font-weight: 700;">Scan UPI QR</h2>
+        </div>
+
+        <div class="neu-card" style="text-align: center; border: 2px dashed rgba(108, 77, 255, 0.4); padding: 24px;">
+          <div style="width: 130px; height: 130px; margin: 0 auto 14px auto; background: #000; border-radius: 16px; display: flex; align-items: center; justify-content: center;">
+            <svg width="84" height="84" viewBox="0 0 24 24" fill="none" stroke="#818CF8" stroke-width="1.5"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+          </div>
+          <p style="font-size: 13px; color: var(--text-secondary);">Point camera or pick sample QR below</p>
+          <button class="btn-neu-primary" style="margin-top: 14px; padding: 10px; font-size: 13px;" onclick="tryCameraScan()">Camera Scanner</button>
+        </div>
+
+        <div class="section-title">Or Pick Sample QR:</div>
+        <div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px;">
+          <button class="neu-card" style="padding: 12px 16px; margin-bottom: 0; text-align: left; font-size: 12px; cursor: pointer;" onclick="selectSampleQr('safe')">
+            🟢 Verified Merchant: Swiggy Food (Rs 350)
+          </button>
+          <button class="neu-card" style="padding: 12px 16px; margin-bottom: 0; text-align: left; font-size: 12px; cursor: pointer;" onclick="selectSampleQr('collect')">
+            🔴 Fraudulent Collect Request (mode=02)
+          </button>
+          <button class="neu-card" style="padding: 12px 16px; margin-bottom: 0; text-align: left; font-size: 12px; cursor: pointer;" onclick="selectSampleQr('lookalike')">
+            🔴 Phishing Lookalike VPA (sw1ggy@icici)
+          </button>
+        </div>
+
+        <textarea id="raw-upi-paste" rows="2" placeholder="upi://pay?pa=..." style="width: 100%; background: var(--bg-surface); border: var(--border-card); border-radius: var(--radius-md); padding: 12px; color: #FFFFFF; font-family: monospace; font-size: 12px; margin-bottom: 16px;"></textarea>
+
+        <button class="btn-neu-primary" onclick="processScannedUpi()">Inspect QR with Shield</button>
+      </section>
+
+      <!-- SCREEN 6: INBOX -->
+      <section id="screen-inbox" class="screen" style="padding: 16px 20px;">
+        <h2 style="font-size: 20px; font-weight: 700; margin-bottom: 4px;">Mock Inbox</h2>
+        <p style="font-size: 12px; color: var(--text-secondary); margin-bottom: 16px;">Tapping a link inspects it with Shield (never opens external browser)</p>
+
+        <div class="filter-chips-row">
+          <div class="filter-chip active" onclick="filterInbox('ALL')">All</div>
+          <div class="filter-chip" onclick="filterInbox('SCAM')">Scams</div>
+          <div class="filter-chip" onclick="filterInbox('SAFE')">Safe</div>
+        </div>
+
+        <div id="inbox-messages-list" style="display: flex; flex-direction: column; gap: 14px;">
+          <!-- Populated by JS -->
+        </div>
+      </section>
+
+      <!-- SCREEN 7: LINK CHECK (HERO SCREEN) -->
+      <section id="screen-shield" class="screen" style="padding: 16px 20px;">
+        <div style="display: flex; align-items: center; gap: 14px; margin-bottom: 16px;">
+          <button class="icon-btn" onclick="navigateTo('home')">←</button>
+          <h2 style="font-size: 20px; font-weight: 700;">Shield Threat Audit</h2>
+        </div>
+
+        <div id="shield-verdict-card" class="neu-card" style="text-align: center; border: 2px solid rgba(108, 77, 255, 0.4);">
+          <!-- Large Shield Hero Badge -->
+          <div id="shield-hero-badge" style="width: 68px; height: 68px; border-radius: 20px; margin: 0 auto 12px auto; display: flex; align-items: center; justify-content: center; background: rgba(108, 77, 255, 0.2);">
+            <svg id="shield-hero-icon" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          </div>
+
+          <h2 id="shield-verdict-title" style="font-size: 22px; font-weight: 800; margin-bottom: 4px;">ANALYZING...</h2>
+          <div id="shield-fraud-type-chip" class="filter-chip active" style="display: inline-block; padding: 4px 14px; margin-bottom: 16px;">Threat Detection</div>
+
+          <!-- Animated Risk Gauge Ring -->
+          <div class="risk-ring-container">
+            <svg class="risk-ring-svg" width="130" height="130" viewBox="0 0 130 130">
+              <circle class="risk-ring-bg" cx="65" cy="65" r="54"/>
+              <circle id="shield-risk-circle" class="risk-ring-val" cx="65" cy="65" r="54" stroke="#EF4444" stroke-dasharray="339.29" stroke-dashoffset="339.29"/>
+            </svg>
+            <div class="risk-ring-text">
+              <div id="shield-risk-percent" class="risk-ring-score">0%</div>
+              <div style="font-size: 10px; color: var(--text-secondary); font-weight: 600;">RISK SCORE</div>
+            </div>
+          </div>
+
+          <!-- URL Target Box -->
+          <div id="shield-target-url" style="background: var(--bg-input); border-radius: var(--radius-md); padding: 10px; word-break: break-all; font-family: monospace; font-size: 12px; margin: 12px 0; color: var(--text-secondary);">
+            https://example.com
+          </div>
+
+          <!-- Highlighted Text Preview -->
+          <div id="shield-message-preview" style="text-align: left; background: var(--bg-surface-elevated); padding: 12px; border-radius: var(--radius-md); font-size: 12px; line-height: 1.5; margin-bottom: 16px; display: none;"></div>
+
+          <!-- Reasons List -->
+          <div style="text-align: left; margin: 16px 0;">
+            <div style="font-size: 13px; font-weight: 700; margin-bottom: 8px;">Key Risk Drivers:</div>
+            <ul id="shield-reasons-list" style="padding-left: 20px; font-size: 12px; color: var(--text-secondary); line-height: 1.6;"></ul>
+          </div>
+
+          <!-- Expandable Decision Signals -->
+          <details style="text-align: left; background: var(--bg-surface-elevated); border-radius: var(--radius-md); padding: 12px; margin-bottom: 20px;">
+            <summary style="font-size: 12px; font-weight: 700; cursor: pointer; color: var(--accent-blue);">How Shield Decided (Multi-Signal Audit)</summary>
+            <div id="shield-signals-breakdown" style="margin-top: 12px; display: flex; flex-direction: column; gap: 8px; font-size: 11px;"></div>
+          </details>
+
+          <!-- Buttons -->
+          <div style="display: flex; flex-direction: column; gap: 10px;">
+            <button class="btn-neu-primary" onclick="navigateTo('home')">← Go Back to Safety</button>
+            <button id="btn-proceed-warn" class="neu-card" style="display: none; padding: 12px; font-weight: 600; font-size: 12px; margin-bottom: 0;" onclick="proceedPastWarning()">Proceed Anyway (Not Recommended)</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- SCREEN 8: PROFILE & CONTROLS -->
+      <section id="screen-profile" class="screen" style="padding: 16px 20px;">
+        <div class="screen-header-bar">
+          <h2 class="screen-title">Profile & Controls</h2>
+          <div id="profile-header-balance" class="header-bal-badge">₹0.00</div>
+        </div>
+
+        <div class="neu-card" style="margin-bottom: 16px;">
+          <div style="display: flex; align-items: center; gap: 14px; margin-bottom: 16px;">
+            <div id="profile-avatar" class="avatar-square" style="background: #6C4DFF;">AS</div>
+            <div>
+              <div id="profile-name" style="font-size: 16px; font-weight: 700;">Aarav Sharma</div>
+              <div id="profile-phone" style="font-size: 12px; color: var(--text-secondary);">+91 98765 43210</div>
+              <div id="profile-city" style="font-size: 11px; color: var(--accent-blue);">Delhi (Student)</div>
+            </div>
+          </div>
+          <button class="btn-neu-primary" style="padding: 10px; font-size: 12px;" onclick="switchUserAccount()">Switch Profile</button>
+        </div>
+
+        <div class="neu-card" style="margin-bottom: 16px;">
+          <div class="section-title">Settings</div>
+          <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid var(--border-subtle);">
+            <div>
+              <span style="font-size: 13px; font-weight: 600;">Dark Theme</span>
+              <p style="font-size: 11px; color: var(--text-secondary);">Toggle light / dark appearance</p>
+            </div>
+            <button class="filter-chip" onclick="toggleTheme()">Toggle</button>
+          </div>
+          <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px 0 4px 0;">
+            <div>
+              <span style="font-size: 13px; font-weight: 600;">Freeze Account</span>
+              <p style="font-size: 11px; color: var(--text-secondary);">Block all outbound debits</p>
+            </div>
+            <button id="btn-freeze-toggle" class="filter-chip" onclick="toggleFreezeAccount()">ACTIVE</button>
+          </div>
+        </div>
+
+        <!-- Diagnostics -->
+        <div class="neu-card">
+          <div class="section-title">Model Diagnostics (CO5)</div>
+          <div id="profile-model-metrics" style="font-size: 12px; color: var(--text-secondary); line-height: 1.7;">
+            Loading model telemetry...
+          </div>
+        </div>
+
+        <div id="pwa-install-container" style="margin: 16px 0;">
+          <button id="btn-install-pwa" class="btn-neu-primary" style="display: none;" onclick="triggerPwaInstall()">
+            📱 Install SafePay to Home Screen
+          </button>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- Floating Glass Bottom Navigation Bar -->
+    <nav class="bottom-nav">
+      <div class="nav-item active" data-screen="home" onclick="navigateTo('home')">
+        <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        <span>Home</span>
+      </div>
+      <div class="nav-item" data-screen="inbox" onclick="navigateTo('inbox')">
+        <svg viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+        <span>Inbox</span>
+      </div>
+      <div class="nav-shield-btn" onclick="navigateTo('shield')">
+        <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+      </div>
+      <div class="nav-item" data-screen="history" onclick="navigateTo('history')">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        <span>History</span>
+      </div>
+      <div class="nav-item" data-screen="profile" onclick="navigateTo('profile')">
+        <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        <span>Profile</span>
+      </div>
+    </nav>
+
+    <!-- QUICK BILL PAY MODAL -->
+    <div id="modal-billpay-sheet" class="bottom-sheet-backdrop">
+      <div class="bottom-sheet">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+          <h3 id="billpay-title" style="font-size: 16px; font-weight: 700;">Quick Pay</h3>
+          <span style="cursor: pointer; font-size: 20px;" onclick="closeBillPayModal()">✕</span>
+        </div>
+        <p id="billpay-biller" style="font-size: 13px; color: var(--text-secondary); margin-bottom: 16px;">Provider</p>
+        
+        <div class="neu-card" style="margin-bottom: 20px;">
+          <div style="font-size: 12px; color: var(--text-secondary); margin-bottom: 4px;">Bill Amount</div>
+          <div id="billpay-amount" style="font-size: 32px; font-weight: 700; color: #FFFFFF;">₹0.00</div>
+        </div>
+
+        <button class="btn-neu-primary" onclick="proceedBillPay()">Proceed with SafePay</button>
+      </div>
+    </div>
+
+    <!-- BOTTOM SHEET: PIN ENTRY -->
+    <div id="modal-pin-sheet" class="bottom-sheet-backdrop">
+      <div class="bottom-sheet">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+          <h3 style="font-size: 16px; font-weight: 700;">Enter UPI PIN</h3>
+          <span style="cursor: pointer; font-size: 20px;" onclick="closePinSheet()">✕</span>
+        </div>
+        <p style="font-size: 13px; text-align: center; color: var(--text-secondary); margin-bottom: 14px;">
+          Paying <strong id="sheet-amount-label" style="color: #FFFFFF;">Rs 0</strong> to <strong id="sheet-payee-label" style="color: #FFFFFF;">Recipient</strong>
+        </p>
+
+        <div id="sheet-pin-dots" style="display: flex; justify-content: center; gap: 14px; margin-bottom: 18px;">
+          <div class="pin-dot" style="width: 14px; height: 14px; border-radius: 50%; background: var(--bg-surface-elevated); border: var(--border-card);"></div>
+          <div class="pin-dot" style="width: 14px; height: 14px; border-radius: 50%; background: var(--bg-surface-elevated); border: var(--border-card);"></div>
+          <div class="pin-dot" style="width: 14px; height: 14px; border-radius: 50%; background: var(--bg-surface-elevated); border: var(--border-card);"></div>
+          <div class="pin-dot" style="width: 14px; height: 14px; border-radius: 50%; background: var(--bg-surface-elevated); border: var(--border-card);"></div>
+        </div>
+
+        <div class="neu-numpad">
+          <button class="neu-key" onclick="handleSheetDigit('1')">1</button>
+          <button class="neu-key" onclick="handleSheetDigit('2')">2</button>
+          <button class="neu-key" onclick="handleSheetDigit('3')">3</button>
+          <button class="neu-key" onclick="handleSheetDigit('4')">4</button>
+          <button class="neu-key" onclick="handleSheetDigit('5')">5</button>
+          <button class="neu-key" onclick="handleSheetDigit('6')">6</button>
+          <button class="neu-key" onclick="handleSheetDigit('7')">7</button>
+          <button class="neu-key" onclick="handleSheetDigit('8')">8</button>
+          <button class="neu-key" onclick="handleSheetDigit('9')">9</button>
+          <button class="neu-key" style="font-size: 12px; font-weight: 700;" onclick="clearSheetPin()">CLR</button>
+          <button class="neu-key" onclick="handleSheetDigit('0')">0</button>
+          <button class="neu-key" onclick="backspaceSheetPin()">⌫</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- BOTTOM SHEET: WARNING CONFIRMATION -->
+    <div id="modal-warning-sheet" class="bottom-sheet-backdrop">
+      <div class="bottom-sheet">
+        <div style="width: 48px; height: 48px; border-radius: 16px; background: rgba(245, 158, 11, 0.2); color: #F59E0B; display: flex; align-items: center; justify-content: center; margin: 0 auto 12px auto;">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+        </div>
+        <h3 style="text-align: center; color: #FBBF24; margin-bottom: 6px;">Security Warning Detected</h3>
+        <p id="warn-sheet-reason" style="font-size: 13px; text-align: center; color: var(--text-secondary); margin-bottom: 20px; line-height: 1.5;">
+          Unusual transaction behavior flagged by SafePay Shield.
+        </p>
+
+        <div style="display: flex; flex-direction: column; gap: 10px;">
+          <button class="btn-neu-primary" onclick="closeWarningSheet()">Cancel Payment (Safe)</button>
+          <button class="neu-card" style="padding: 12px; margin-bottom: 0; font-weight: 600; font-size: 12px;" onclick="confirmWithWarningAck()">I Understand the Risk • Authorize</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- BOTTOM SHEET: SUCCESS RECEIPT -->
+    <div id="modal-receipt-sheet" class="bottom-sheet-backdrop">
+      <div class="bottom-sheet" style="text-align: center;">
+        <div style="width: 58px; height: 58px; border-radius: 18px; background: rgba(34, 197, 94, 0.2); color: #22C55E; display: flex; align-items: center; justify-content: center; margin: 0 auto 14px auto;">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+        </div>
+        <h2 style="color: #22C55E; font-size: 20px; margin-bottom: 4px;">Payment Successful</h2>
+        <h1 id="receipt-amount" style="font-size: 34px; margin: 8px 0;">₹0.00</h1>
+        <p id="receipt-payee" style="font-size: 13px; color: var(--text-secondary); margin-bottom: 18px;">To Payee</p>
+
+        <div class="neu-card" style="text-align: left; font-size: 12px; padding: 14px; margin-bottom: 20px;">
+          <div style="display: flex; justify-content: space-between; margin-bottom: 6px;">
+            <span style="color: var(--text-secondary);">Transaction ID</span>
+            <span id="receipt-txn-id" style="font-family: monospace;">#000</span>
+          </div>
+          <div style="display: flex; justify-content: space-between; margin-bottom: 6px;">
+            <span style="color: var(--text-secondary);">Timestamp</span>
+            <span id="receipt-ts">2026-08-01</span>
+          </div>
+          <div style="display: flex; justify-content: space-between;">
+            <span style="color: var(--text-secondary);">Updated Balance</span>
+            <span id="receipt-new-bal" style="font-weight: 700; color: #22C55E;">₹0.00</span>
+          </div>
+        </div>
+
+        <button class="btn-neu-primary" onclick="closeReceiptSheet()">Done</button>
+      </div>
+    </div>
+
+    <!-- SCANNING OVERLAY -->
+    <div id="modal-scanning-overlay" class="bottom-sheet-backdrop" style="justify-content: center; align-items: center;">
+      <div style="text-align: center;">
+        <div style="width: 70px; height: 70px; border-radius: 50%; background: rgba(108, 77, 255, 0.2); border: 2px solid #6C4DFF; display: flex; align-items: center; justify-content: center; margin: 0 auto 14px auto;">
+          <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#6C4DFF" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        </div>
+        <h3 style="font-size: 16px; font-weight: 700;">Shield Scanning...</h3>
+        <p style="font-size: 12px; color: var(--text-secondary);">Evaluating multi-vector risk models</p>
+      </div>
+    </div>
+
+  </div>
+
+  <script src="/app.js"></script>
+</body>
+</html>
